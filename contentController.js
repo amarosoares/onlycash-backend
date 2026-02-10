@@ -1,17 +1,23 @@
-const db = require('../config/db');
+const db = require('./db');
 
-exports.uploadContent = (req, res) => {
-  const { creator_id, type, title, price } = req.body;
-  db.query('INSERT INTO conteudos (criador_id, tipo, titulo, preco) VALUES (?, ?, ?, ?)',
-    [creator_id, type, title, price], (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: 'Conteúdo publicado com sucesso!' });
-    });
+exports.getAllContent = async (req, res) => {
+  try {
+    const [rows] = await db.execute('SELECT * FROM content');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-exports.getContents = (req, res) => {
-  db.query('SELECT * FROM conteudos', (err, results) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(results);
-  });
+exports.createContent = async (req, res) => {
+  try {
+    const { title, description, creatorId } = req.body;
+    const [result] = await db.execute(
+      'INSERT INTO content (title, description, creatorId) VALUES (?, ?, ?)',
+      [title, description, creatorId]
+    );
+    res.status(201).json({ message: 'Content created', contentId: result.insertId });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
