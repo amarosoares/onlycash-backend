@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const subscriptionController = require('./subscriptionController'); // corrigido
+const subscriptionController = require('./subscriptionController');
 
-router.post('/subscribe', subscriptionController.subscribeUser);
-router.get('/subscriptions/:creatorId', subscriptionController.getSubscriptions);
+router.post('/', subscriptionController.createSubscription);
 
 module.exports = router;
