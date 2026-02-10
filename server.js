@@ -1,25 +1,18 @@
 const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+const app = express();
+const PORT = process.env.PORT || 5000;
 
 const authRoutes = require('./authRoutes');
 const contentRoutes = require('./contentRoutes');
-const subscriptionRoutes = require('./subscriptionRoutes');
 const paymentRoutes = require('./paymentRoutes');
+const subscriptionRoutes = require('./subscriptionRoutes');
 
-
-const app = express();
-app.use(cors());
 app.use(express.json());
 
-// Rotas
-app.use('/api/auth', authRoutes);
-app.use('/api/content', contentRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/subscription', subscriptionRoutes);
+app.use('/auth', authRoutes);
+app.use('/content', contentRoutes);
+app.use('/payments', paymentRoutes);
+app.use('/subscriptions', subscriptionRoutes);
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`OnlyCash backend rodando na porta ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
