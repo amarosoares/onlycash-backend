@@ -1,13 +1,14 @@
-const db = require('../config/db');
-const payments = require('../config/payments');
+const db = require('./db');
 
-exports.makePayment = (req, res) => {
-  const { user_id, creator_id, amount, method } = req.body;
-  // Aqui você integraria com APIs reais (Multicaixa / Unitel Money)
-  // Por enquanto só registramos a transação no banco
-  db.query('INSERT INTO transacoes (usuario_id, criador_id, valor, tipo, status) VALUES (?, ?, ?, ?, ?)',
-    [user_id, creator_id, amount, method, 'paid'], (err, result) => {
-      if (err) return res.status(500).json({ error: err });
-      res.json({ message: 'Pagamento registrado com sucesso!' });
-    });
+exports.createPayment = async (req, res) => {
+  try {
+    const { userId, amount, method } = req.body;
+    const [result] = await db.execute(
+      'INSERT INTO payments (userId, amount, method) VALUES (?, ?, ?)',
+      [userId, amount, method]
+    );
+    res.status(201).json({ message: 'Payment created', paymentId: result.insertId });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
